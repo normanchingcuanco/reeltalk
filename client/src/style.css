@@ -1,0 +1,397 @@
+/* ============================= */
+/* 🎬 REELTALK PREMIUM DESIGN SYSTEM */
+/* ============================= */
+
+:root {
+  --primary: #E35336;
+  --primary-dark: #A14428;
+  --primary-light: #FF6B4A;
+
+  --accent: #F4A460;
+
+  --bg-main: #F4F1E8;
+  --bg-gradient-top: #F4F1E8;
+  --bg-gradient-bottom: #EFE9DC;
+
+  --bg-card: #FFFFFF;
+
+  --text-dark: #1E1E1E;
+  --text-muted: #6B6B6B;
+
+  --border-color: #EAEAEA;
+
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
+  --shadow-hover: 0 20px 50px rgba(0,0,0,0.08);
+}
+
+/* ============================= */
+/* GLOBAL RESET */
+/* ============================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(
+    180deg,
+    var(--bg-gradient-top) 0%,
+    var(--bg-gradient-bottom) 100%
+  );
+  color: var(--text-dark);
+}
+
+/* ============================= */
+/* TYPOGRAPHY */
+/* ============================= */
+
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 18px;
+}
+
+p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ============================= */
+/* CONTAINERS */
+/* ============================= */
+
+.container {
+  padding: 40px 60px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+/* Only pages with sidebar should reserve space on desktop */
+.layout.with-sidebar .container {
+  padding-left: 120px;
+}
+
+/* Mobile: remove sidebar reserved space */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .layout.with-sidebar .container {
+    padding-left: 20px;
+  }
+}
+
+/* ============================= */
+/* CARDS */
+/* ============================= */
+
+.card {
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 22px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ============================= */
+/* MOVIE / WATCHLIST GRID */
+/* ============================= */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 30px;
+  width: 100%;
+}
+
+/* Extra large desktop boost */
+@media (min-width: 1600px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+/* ============================= */
+/* 🎯 MODERN BUTTON SYSTEM */
+/* ============================= */
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Primary */
+button.primary {
+  background: linear-gradient(
+    135deg,
+    var(--primary-light),
+    var(--primary-dark)
+  );
+  color: white;
+  box-shadow: 0 8px 20px rgba(163, 82, 45, 0.35);
+}
+
+button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(163, 82, 45, 0.45);
+}
+
+/* Secondary */
+button.secondary {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 6px 15px rgba(244, 164, 96, 0.3);
+}
+
+button.secondary:hover {
+  transform: translateY(-2px);
+}
+
+/* Ghost */
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+button.ghost:hover {
+  background: #fafafa;
+}
+
+/* Danger */
+button.danger {
+  background: linear-gradient(135deg, #ff6b6b, #c0392b);
+  color: white;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================= */
+/* INPUT SYSTEM */
+/* ============================= */
+
+input,
+textarea,
+select {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  transition: all 0.25s ease;
+  font-family: inherit;
+  background: white;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(227, 83, 54, 0.15);
+}
+
+/* ============================= */
+/* FORMS */
+/* ============================= */
+
+.container form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.container button {
+  margin-top: 12px;
+}
+
+.container p {
+  margin-top: 16px;
+}
+
+/* ============================= */
+/* TABLES */
+/* ============================= */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+th {
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--primary-dark)
+  );
+  color: white;
+  padding: 14px;
+  text-align: left;
+}
+
+td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+}
+
+tr:hover {
+  background: #fafafa;
+}
+
+/* ============================= */
+/* LINKS */
+/* ============================= */
+
+a {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============================= */
+/* SIDEBAR MICRO-INTERACTIONS */
+/* ============================= */
+
+.sidebar a {
+  transition: all 0.2s ease;
+}
+
+.sidebar a:hover {
+  background: rgba(255,255,255,0.12);
+  padding-left: 10px;
+  border-radius: 10px;
+}
+
+/* ============================= */
+/* SUBTLE ANIMATION */
+/* ============================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container {
+  animation: fadeUp 0.4s ease;
+}
+
+/* ============================= */
+/* MAIN LAYOUT OFFSET FIX */
+/* ============================= */
+
+#app {
+  display: flex;
+  width: 100%;
+}
+
+.layout {
+  flex: 1;        /* 🔥 this is the key */
+  width: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+router-view {
+  width: 100%;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+/* ============================= */
+/* DESKTOP GRID EXPANSION FIX */
+/* ============================= */
+
+@media (min-width: 1025px) {
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+  }
+
+  .card {
+    max-width: 100%; /* remove width restriction */
+  }
+
+}
+
+/* ============================= */
+/* DESKTOP CONTENT WIDTH FIX */
+/* ============================= */
+
+@media (min-width: 1025px) {
+
+  .layout.with-sidebar {
+    display: flex;
+  }
+
+  .layout.with-sidebar .container {
+    flex: 1;               /* allow full width */
+    max-width: none;       /* remove width cap */
+  }
+
+}
+
+.layout.with-sidebar {
+  display: flex;
+}
+
+.main-content {
+  flex: 1;          /* 🔥 THIS IS THE FIX */
+  width: 100%;
+}
+
+.pagination {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pagination span {
+  font-weight: 600;
+}
