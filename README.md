@@ -113,69 +113,75 @@ Administrators have extended privileges for content management and moderation.
 
 ## 📊 Feature Completion Status
 
+## 📊 Feature Completion Status
+
 ### 1. Core Application Features
 
-| Feature | Status |
-|---------|--------|
-| User Registration | ✅ Complete |
-| User Login (JWT) | ✅ Complete |
-| Admin Dashboard | ✅ Complete |
-| Add Movie (OMDb Integration) | ✅ Complete |
-| Update Movie | ✅ Complete |
-| Delete Movie | ✅ Complete |
-| Duplicate Movie Guard | ⚠️ Partial |
-| View Single Movie | ✅ Complete |
-| Search by Title | ✅ Complete |
-| Filter by Genre | ✅ Complete |
-| Pagination (Movies) | ✅ Complete |
-| Sort by Highest Rated | ✅ Complete |
-| Sort by Most Liked | ✅ Complete |
-| Sort by Trending | ✅ Complete |
-| Track Movie Creator | ✅ Complete |
+| Feature Description | Status |
+|---------------------|--------|
+| User Registration with email and password authentication | ✅ Complete |
+| Secure User Login using JWT | ✅ Complete |
+| Admin Dashboard with platform metrics | ✅ Complete |
+| Add Movie via OMDb API integration | ✅ Complete |
+| Update Movie (Creator or Admin) | ✅ Complete |
+| Delete Movie (Creator or Admin) | ✅ Complete |
+| Prevent Duplicate Movies (Title + Year validation) | ⚠️ Partial |
+| View Single Movie Details | ✅ Complete |
+| Search Movies by Title | ✅ Complete |
+| Filter Movies by Genre | ✅ Complete |
+| Pagination for Movies | ✅ Complete |
+| Sort Movies by Highest Rated | ✅ Complete |
+| Sort Movies by Most Liked | ✅ Complete |
+| Sort Movies by Trending Score | ✅ Complete |
+| Track Movie Creator (createdBy field) | ✅ Complete |
 
 ---
 
 ### 2. Engagement & Social Features
 
-| Feature | Status |
-|---------|--------|
-| Like Movie | ✅ Complete |
+| Feature Description | Status |
+|---------------------|--------|
+| Like / Unlike Movies | ✅ Complete |
 | Prevent Duplicate Movie Likes | ✅ Complete |
-| Movie Rating System | ✅ Complete |
-| Automatic Average Rating | ✅ Complete |
-| Watchlist Feature | ✅ Complete |
-| Add Comment | ✅ Complete |
-| Reply to Comment | ✅ Complete |
-| Edit Own Comment | ✅ Complete |
-| Delete Own Comment | ✅ Complete |
-| Admin Comment Moderation | ✅ Complete |
-| Comment Reactions | ⚠️ Partial |
+| Movie Rating System (1–5 Stars) | ✅ Complete |
+| Automatic Average Rating Calculation | ✅ Complete |
+| Add Movies to Personal Watchlist | ✅ Complete |
+| Remove Movies from Watchlist | ✅ Complete |
+| View Personal Watchlist | ✅ Complete |
+| Add Comment to Movies | ✅ Complete |
+| Reply to Comments (Threaded Discussion) | ✅ Complete |
+| Edit Own Comments | ✅ Complete |
+| Delete Own Comments | ✅ Complete |
+| Admin Edit Any Comment | ✅ Complete |
+| Admin Delete Any Comment | ✅ Complete |
+| Like / Dislike Comments | ⚠️ Partial |
+| Prevent Duplicate Comment Reactions | ⚠️ Partial |
 
 ---
 
 ### 3. Authentication & Role Control
 
-| Feature | Status |
-|---------|--------|
-| JWT Authentication | ✅ Complete |
-| Role-Based Access Control | ✅ Complete |
-| Creator-Based Authorization | ✅ Complete |
+| Feature Description | Status |
+|---------------------|--------|
+| JWT-Based Authentication | ✅ Complete |
+| Role-Based Access Control (User/Admin) | ✅ Complete |
+| Creator-Based Authorization for Movie Updates | ✅ Complete |
 | Admin Override Permissions | ✅ Complete |
 
 ---
 
-### 4. System & Architecture
+### 4. System & Architecture Improvements
 
-| Feature | Status |
-|---------|--------|
-| Environment-Based Configuration | ✅ Complete |
-| Database Indexing | ⚠️ Partial |
+| Feature Description | Status |
+|---------------------|--------|
+| Environment-Based Configuration for Production | ✅ Complete |
+| Database Indexing for Performance | ⚠️ Partial |
 | Pagination for Comments | ❌ Not Implemented |
-| Centralized Error Handling | ❌ Not Implemented |
+| Centralized Error Handling Middleware | ❌ Not Implemented |
 | Input Validation Middleware | ❌ Not Implemented |
-| Logging & Monitoring | ❌ Not Implemented |
-| API Documentation | ❌ Not Implemented |
-| Caching Layer | ❌ Not Implemented |
+| Logging & Monitoring System | ❌ Not Implemented |
+| API Documentation (Swagger / Postman) | ❌ Not Implemented |
+| Caching Layer (Redis) | ❌ Not Implemented |
 
 ---
 
