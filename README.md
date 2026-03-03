@@ -113,75 +113,74 @@ Administrators have extended privileges for content management and moderation.
 
 ## 📊 Feature Completion Status
 
-## 📊 Feature Completion Status
-
 ### 1. Core Application Features
 
-| Feature Description | Status |
-|---------------------|--------|
-| User Registration with email and password authentication | ✅ Complete |
-| Secure User Login using JWT | ✅ Complete |
-| Admin Dashboard with platform metrics | ✅ Complete |
-| Add Movie via OMDb API integration | ✅ Complete |
-| Update Movie (Creator or Admin) | ✅ Complete |
-| Delete Movie (Creator or Admin) | ✅ Complete |
-| Prevent Duplicate Movies (Title + Year validation) | ⚠️ Partial |
-| View Single Movie Details | ✅ Complete |
-| Search Movies by Title | ✅ Complete |
-| Filter Movies by Genre | ✅ Complete |
-| Pagination for Movies | ✅ Complete |
-| Sort Movies by Highest Rated | ✅ Complete |
-| Sort Movies by Most Liked | ✅ Complete |
-| Sort Movies by Trending Score | ✅ Complete |
-| Track Movie Creator (createdBy field) | ✅ Complete |
+| Feature | Description | Status |
+|----------|-------------|--------|
+| User Registration | Allow users to create an account using email and password | ✅ Complete |
+| User Login (JWT) | Authenticate users securely using JSON Web Tokens | ✅ Complete |
+| Admin Dashboard | Provide administrators with platform metrics and overview | ✅ Complete |
+| Add Movie (OMDb Integration) | Allow users to add movies fetched from OMDb API | ✅ Complete |
+| Update Movie | Allow movie creator or admin to modify movie details | ✅ Complete |
+| Delete Movie | Allow movie creator or admin to remove movies | ✅ Complete |
+| Duplicate Movie Guard | Prevent duplicate movie entries based on title and year | ⚠️ Partial |
+| View Single Movie | Display complete movie details and engagement metrics | ✅ Complete |
+| Search by Title | Enable users to search movies by title | ✅ Complete |
+| Filter by Genre | Enable filtering of movies by genre | ✅ Complete |
+| Pagination (Movies) | Limit number of movies per page for performance | ✅ Complete |
+| Sort by Highest Rated | Display movies ordered by highest average rating | ✅ Complete |
+| Sort by Most Liked | Display movies ordered by number of likes | ✅ Complete |
+| Sort by Trending | Rank movies using rating and like combination | ✅ Complete |
+| Track Movie Creator | Store and display which user added the movie | ✅ Complete |
 
 ---
 
 ### 2. Engagement & Social Features
 
-| Feature Description | Status |
-|---------------------|--------|
-| Like / Unlike Movies | ✅ Complete |
-| Prevent Duplicate Movie Likes | ✅ Complete |
-| Movie Rating System (1–5 Stars) | ✅ Complete |
-| Automatic Average Rating Calculation | ✅ Complete |
-| Add Movies to Personal Watchlist | ✅ Complete |
-| Remove Movies from Watchlist | ✅ Complete |
-| View Personal Watchlist | ✅ Complete |
-| Add Comment to Movies | ✅ Complete |
-| Reply to Comments (Threaded Discussion) | ✅ Complete |
-| Edit Own Comments | ✅ Complete |
-| Delete Own Comments | ✅ Complete |
-| Admin Edit Any Comment | ✅ Complete |
-| Admin Delete Any Comment | ✅ Complete |
-| Like / Dislike Comments | ⚠️ Partial |
-| Prevent Duplicate Comment Reactions | ⚠️ Partial |
+| Feature | Description | Status |
+|----------|-------------|--------|
+| Like Movie | Allow users to like or unlike a movie | ✅ Complete |
+| Prevent Duplicate Movie Likes | Ensure a user can only like a movie once | ✅ Complete |
+| Movie Rating System | Allow users to rate movies from 1–5 stars | ✅ Complete |
+| Automatic Average Rating | Automatically calculate and display average rating | ✅ Complete |
+| Add to Watchlist | Allow users to save movies to personal watchlist | ✅ Complete |
+| Remove from Watchlist | Allow users to remove movies from watchlist | ✅ Complete |
+| View Personal Watchlist | Display user's saved watchlist movies | ✅ Complete |
+| Add Comment | Allow users to comment on movies | ✅ Complete |
+| Reply to Comment | Allow threaded replies to comments | ✅ Complete |
+| Edit Own Comment | Allow users to modify their own comments | ✅ Complete |
+| Delete Own Comment | Allow users to delete their own comments | ✅ Complete |
+| Admin Edit Comment | Allow administrators to edit any comment | ✅ Complete |
+| Admin Delete Comment | Allow administrators to delete any comment | ✅ Complete |
+| Like Comment | Allow users to like a comment | ⚠️ Partial |
+| Dislike Comment | Allow users to dislike a comment | ⚠️ Partial |
+| Prevent Duplicate Comment Reactions | Ensure users cannot react multiple times to same comment | ⚠️ Partial |
 
 ---
 
 ### 3. Authentication & Role Control
 
-| Feature Description | Status |
-|---------------------|--------|
-| JWT-Based Authentication | ✅ Complete |
-| Role-Based Access Control (User/Admin) | ✅ Complete |
-| Creator-Based Authorization for Movie Updates | ✅ Complete |
-| Admin Override Permissions | ✅ Complete |
+| Feature | Description | Status |
+|----------|-------------|--------|
+| JWT Authentication | Secure protected routes using token-based authentication | ✅ Complete |
+| Role-Based Access Control | Differentiate admin and regular user privileges | ✅ Complete |
+| Creator-Based Authorization | Restrict movie modification to creator or admin | ✅ Complete |
+| Admin Override Permissions | Grant administrators full moderation rights | ✅ Complete |
 
 ---
 
-### 4. System & Architecture Improvements
+### 4. System & Architecture
 
-| Feature Description | Status |
-|---------------------|--------|
-| Environment-Based Configuration for Production | ✅ Complete |
-| Database Indexing for Performance | ⚠️ Partial |
-| Pagination for Comments | ❌ Not Implemented |
-| Centralized Error Handling Middleware | ❌ Not Implemented |
-| Input Validation Middleware | ❌ Not Implemented |
-| Logging & Monitoring System | ❌ Not Implemented |
-| API Documentation (Swagger / Postman) | ❌ Not Implemented |
-| Caching Layer (Redis) | ❌ Not Implemented |
+| Feature | Description | Status |
+|----------|-------------|--------|
+| Environment-Based Configuration | Use environment variables for deployment flexibility | ✅ Complete |
+| Database Indexing | Improve query performance using indexed fields | ⚠️ Partial |
+| Pagination for Comments | Implement pagination for large comment threads | ❌ Not Implemented |
+| Centralized Error Handling | Use middleware for unified error responses | ❌ Not Implemented |
+| Input Validation Middleware | Validate requests using structured validation | ❌ Not Implemented |
+| Logging & Monitoring | Add structured logging for production debugging | ❌ Not Implemented |
+| API Documentation | Provide API documentation via Swagger or Postman | ❌ Not Implemented |
+| Caching Layer | Use Redis or caching strategy for performance | ❌ Not Implemented |
 
 ---
 
