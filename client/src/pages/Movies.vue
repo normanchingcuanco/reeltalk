@@ -1,19 +1,24 @@
 <template>
   <div class="container">
-    <div class="add-movie" v-if="auth.token">
+    <div class="add-movie card" v-if="auth.token">
       <h3>Add a Movie</h3>
       <p class="hint">Enter a title — details + poster will be fetched from OMDb.</p>
 
-      <div class="row">
+      <form class="form" @submit.prevent="addMovie">
+
         <input
           v-model="newTitle"
-          placeholder="e.g. The Dark Knight"
-          @keyup.enter="addMovie"
+          placeholder="Enter movie title"
         />
-        <button class="primary" id="addMovie" @click="addMovie" :disabled="isAdding">
+
+        <button
+          class="primary"
+          :disabled="isAdding"
+        >
           {{ isAdding ? "Adding..." : "Add Movie" }}
         </button>
-      </div>
+
+      </form>
 
       <p v-if="addError" class="error">{{ addError }}</p>
       <p v-if="addSuccess" class="success">{{ addSuccess }}</p>
@@ -21,28 +26,68 @@
 
     <hr />
 
-    <div class="filter-bar">
-      <input
-        v-model="search"
-        placeholder="Search by title..."
-        @keyup.enter="applyFilters"
+    <div class="section-header">
+      <h2>🔥 Trending Movies</h2>
+    </div>
+
+    <div class="grid trending">
+      <MovieCard
+        v-for="(movie, index) in trendingMovies"
+        :key="movie._id"
+        :movie="movie"
+        :rank="index + 1"
+        :watchlistIds="watchlistIds"
+        @refresh="refreshAll"
+        @watchlist-changed="refreshWatchlist"
       />
+    </div>
 
-      <input
-        v-model="genre"
-        placeholder="Filter by genre..."
-        @keyup.enter="applyFilters"
-      />
+    <hr />
 
-      <select v-model="sort">
-        <option value="">Newest</option>
-        <option value="highestRated">Highest Rated</option>
-        <option value="mostLiked">Most Liked</option>
-        <option value="trending">Trending</option>
-      </select>
+    <div class="filter-bar search-section">
+      <h2>All Movies</h2>
+    </div>
 
-      <button class="primary" @click="applyFilters">Apply</button>
-      <button class="secondary" @click="resetFilters">Reset</button>
+    <div class="filter-bar search-section">
+
+      <div class="search-fields">
+        <input
+          v-model="search"
+          placeholder="Search by title..."
+          @keyup.enter="applyFilters"
+        />
+
+        <input
+          v-model="genre"
+          placeholder="Filter by genre..."
+          @keyup.enter="applyFilters"
+        />
+      </div>
+
+      <div class="search-actions">
+
+        <select v-model="sort">
+          <option value="">Newest</option>
+          <option value="highestRated">Highest Rated</option>
+          <option value="mostLiked">Most Liked</option>
+          <option
+            value="trending"
+            title="Trending Score = (likes × 2) + comments + (rating × 2)"
+          >
+            Trending 🔥
+          </option>
+        </select>
+
+        <button class="primary" @click="applyFilters">
+          Apply
+        </button>
+
+        <button class="secondary" @click="resetFilters">
+          Reset
+        </button>
+
+      </div>
+
     </div>
 
     <div class="grid">
@@ -81,6 +126,7 @@ export default {
   data() {
     return {
       movies: [],
+      trendingMovies: [],
       search: "",
       genre: "",
       sort: "",
@@ -103,10 +149,23 @@ export default {
   },
 
   async mounted() {
+    await this.fetchTrending()
     await this.refreshAll()
   },
 
   methods: {
+
+    async fetchTrending() {
+      const res = await api.get("/movies/getMovies", {
+        params: {
+          sort: "trending",
+          limit: 10
+        }
+      })
+
+      this.trendingMovies = res.data.movies || []
+    },
+
     async fetchMovies() {
       const res = await api.get("/movies/getMovies", {
         params: {
@@ -217,7 +276,6 @@ export default {
    BASE (UNCHANGED)
 =============================== */
 
-/* Container */
 /* =============================
    DESKTOP FULL WIDTH FIX
 ============================= */
@@ -228,14 +286,20 @@ export default {
   }
 }
 
-/* Cards Grid */
+/* ===============================
+   MOVIE GRID
+=============================== */
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 28px;
 }
 
-/* Card */
+/* ===============================
+   CARD
+=============================== */
+
 .card {
   background: white;
   border-radius: 16px;
@@ -245,7 +309,10 @@ export default {
   max-width: 320px;
 }
 
-/* Poster */
+/* ===============================
+   POSTER
+=============================== */
+
 .poster {
   width: 100%;
   height: auto;
@@ -254,8 +321,58 @@ export default {
 }
 
 /* ===============================
+   ADD MOVIE SECTION
+=============================== */
+
+.add-movie {
+  margin-bottom: 40px;
+  max-width: 520px;
+}
+
+/* ===============================
+   SECTION SPACING (ADMIN STYLE)
+=============================== */
+
+.section-header {
+  margin-top: 60px;
+  padding-top: 30px;
+  border-top: 1px solid #ddd;
+}
+
+.section-header h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.trending {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+/* ===============================
+   FILTER BAR
+=============================== */
+
+.filter-bar {
+  margin: 35px 0;
+  padding: 25px 30px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-bar button {
+  justify-self: start;
+}
+
+/* ===============================
    MOBILE (DO NOT TOUCH)
 =============================== */
+
 @media (max-width: 768px) {
 
   .container {
@@ -271,6 +388,11 @@ export default {
     max-width: 100%;
   }
 
+}
+
+.add-movie.card {
+  max-width: 700px;
+  width: 100%;
 }
 
 </style>

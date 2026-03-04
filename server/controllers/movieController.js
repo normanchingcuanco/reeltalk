@@ -187,18 +187,30 @@ exports.getMovies = async (req, res) => {
         (b.likes?.length || 0) - (a.likes?.length || 0)
       )
     }
+
+    else if (sort === "mostViewed") {
+      movies = movies.sort((a, b) =>
+        (b.views || 0) - (a.views || 0)
+      )
+    }
+    
     else if (sort === "trending") {
+
       movies = movies.sort((a, b) => {
+
         const scoreA =
-          (a.averageRating || 0) * 2 +
-          (a.likes?.length || 0)
+          ((a.likes?.length || 0) * 2) +
+          (a.comments?.length || 0) +
+          ((a.averageRating || 0) * 2)
 
         const scoreB =
-          (b.averageRating || 0) * 2 +
-          (b.likes?.length || 0)
+          ((b.likes?.length || 0) * 2) +
+          (b.comments?.length || 0) +
+          ((b.averageRating || 0) * 2)
 
         return scoreB - scoreA
       })
+
     }
 
     const total = await Movie.countDocuments(query)
@@ -221,6 +233,10 @@ exports.getMovieById = async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id)
     if (!movie) return res.status(404).json({ message: "Movie not found" })
+
+    // 🔥 Increment view count every time movie page is opened
+    movie.views += 1
+    await movie.save()
 
     return res.status(200).json({ movie })
   } catch (error) {
@@ -701,18 +717,31 @@ exports.getAdminDashboard = async (req, res) => {
     let totalRatings = 0
     let totalMovieLikes = 0
 
+    // 🔥 For platform average rating
+    let ratingSum = 0
+    let ratingCount = 0
+
     movies.forEach((movie) => {
       totalComments += movie.comments.length
       totalRatings += movie.ratings.length
       totalMovieLikes += movie.likes.length
+
+      movie.ratings.forEach((r) => {
+        ratingSum += r.value
+        ratingCount++
+      })
     })
+
+    const averagePlatformRating =
+      ratingCount === 0 ? 0 : Number((ratingSum / ratingCount).toFixed(1))
 
     return res.status(200).json({
       totalUsers,
       totalMovies,
       totalComments,
       totalRatings,
-      totalMovieLikes
+      totalMovieLikes,
+      averagePlatformRating
     })
   } catch (error) {
     console.log("ADMIN DASHBOARD ERROR >>>", error)

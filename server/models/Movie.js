@@ -63,6 +63,11 @@ const movieSchema = new mongoose.Schema(
 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
+    views: {
+      type: Number,
+      default: 0
+    },
+
     ratings: [ratingSchema],
 
     averageRating: {
@@ -76,5 +81,10 @@ const movieSchema = new mongoose.Schema(
 )
 
 movieSchema.index({ title: 1, year: 1 }, { unique: true })
+movieSchema.index({ title: 1 })
+movieSchema.index({ genre: 1 })
+movieSchema.index({ createdAt: -1 })
+movieSchema.index({ averageRating: -1 })
+movieSchema.index({ views: -1 })
 
 module.exports = mongoose.model("Movie", movieSchema)

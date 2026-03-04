@@ -18,6 +18,7 @@
           <span>⭐ {{ formattedRating }}</span>
           <span>❤️ {{ movie.likes?.length || 0 }}</span>
           <span>🗳 {{ movie.ratings?.length || 0 }} ratings</span>
+          <span>👁 {{ movie.views || 0 }}</span>
         </div>
 
         <div v-if="auth.token" class="actions">

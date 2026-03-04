@@ -15,29 +15,208 @@
 <div class="cards">
 
   <div class="card metric-card">
-    <div class="label">Total Users</div>
+    <div class="label">
+      Total Users
+      <span class="metric-help">
+        ⓘ
+        <span class="metric-tooltip">
+          Total Users = number of registered users in the database
+        </span>
+      </span>
+    </div>
     <div class="value">{{ metrics.totalUsers }}</div>
   </div>
 
   <div class="card metric-card">
-    <div class="label">Total Movies</div>
+    <div class="label">
+      Total Movies
+      <span class="metric-help">
+        ⓘ
+        <span class="metric-tooltip">
+          Total Movies = number of movie documents stored in the database
+        </span>
+      </span>
+    </div>
     <div class="value">{{ metrics.totalMovies }}</div>
   </div>
 
   <div class="card metric-card">
-    <div class="label">Total Comments</div>
+    <div class="label">
+      Average Platform Rating
+      <span class="metric-help">
+        ⓘ
+        <span class="metric-tooltip">
+          Average Platform Rating = average of all movie ratings across the platform
+        </span>
+      </span>
+    </div>
+    <div class="value">{{ Number(metrics.averagePlatformRating || 0).toFixed(1) }}</div>
+  </div>
+
+  <div class="card metric-card">
+    <div class="label">
+      Total Comments
+      <span class="metric-help">
+        ⓘ
+        <span class="metric-tooltip">
+          Total Comments = total number of comments across all movies
+        </span>
+      </span>
+    </div>
     <div class="value">{{ metrics.totalComments }}</div>
   </div>
 
   <div class="card metric-card">
-    <div class="label">Total Ratings</div>
+    <div class="label">
+      Total Ratings
+      <span class="metric-help">
+        ⓘ
+        <span class="metric-tooltip">
+          Total Ratings = total number of user ratings across all movies
+        </span>
+      </span>
+    </div>
     <div class="value">{{ metrics.totalRatings }}</div>
   </div>
 
   <div class="card metric-card">
-    <div class="label">Total Movie Likes</div>
+    <div class="label">
+      Total Movie Likes
+      <span class="metric-help">
+        ⓘ
+        <span class="metric-tooltip">
+          Total Movie Likes = sum of all likes arrays across movies
+        </span>
+      </span>
+    </div>
     <div class="value">{{ metrics.totalMovieLikes }}</div>
   </div>
+
+</div>
+
+<hr />
+
+<!-- ================= MOVIE ANALYTICS ================= -->
+
+<div class="section-header">
+<h3>Top Movies by Views</h3>
+</div>
+
+<div class="table-wrapper">
+
+<table v-if="movies.length">
+
+<thead>
+<tr>
+<th>Rank</th>
+<th>Title</th>
+<th>Views</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr
+v-for="(movie, index) in movies
+.slice()
+.sort((a,b)=>(b.views||0)-(a.views||0))
+.slice(0,5)"
+:key="'views-'+movie._id"
+>
+
+<td>{{ index + 1 }}</td>
+<td>{{ movie.title }}</td>
+<td>{{ movie.views || 0 }}</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<hr />
+
+<!-- ================= TOP MOVIES BY LIKES ================= -->
+
+<div class="section-header">
+<h3>Top Movies by Likes</h3>
+</div>
+
+<div class="table-wrapper">
+
+<table v-if="movies.length">
+
+<thead>
+<tr>
+<th>Rank</th>
+<th>Title</th>
+<th>Likes</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr
+v-for="(movie, index) in movies
+.slice()
+.sort((a,b)=>(b.likes?.length||0)-(a.likes?.length||0))
+.slice(0,5)"
+:key="'likes-'+movie._id"
+>
+
+<td>{{ index + 1 }}</td>
+<td>{{ movie.title }}</td>
+<td>{{ movie.likes?.length || 0 }}</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<hr />
+
+<!-- ================= TOP MOVIES BY RATING ================= -->
+
+<div class="section-header">
+<h3>Top Movies by Rating</h3>
+</div>
+
+<div class="table-wrapper">
+
+<table v-if="movies.length">
+
+<thead>
+<tr>
+<th>Rank</th>
+<th>Title</th>
+<th>Rating</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr
+v-for="(movie, index) in movies
+.slice()
+.sort((a,b)=>(b.averageRating||0)-(a.averageRating||0))
+.slice(0,5)"
+:key="'rating-'+movie._id"
+>
+
+<td>{{ index + 1 }}</td>
+<td>{{ movie.title }}</td>
+<td>{{ (movie.averageRating || 0).toFixed(1) }}</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 </div>
 
@@ -90,6 +269,7 @@
 <th>Genre</th>
 <th>Description</th>
 <th>Likes</th>
+<th>Views</th>
 <th>Rating</th>
 <th>Actions</th>
 </tr>
@@ -109,6 +289,7 @@
 </td>
 
 <td>{{ movie.likes?.length || 0 }}</td>
+<td>{{ movie.views || 0 }}</td>
 <td>{{ (movie.averageRating || 0).toFixed(1) }}</td>
 
 <td class="actions-cell">
@@ -132,7 +313,6 @@ Delete
 </div>
 
 <p v-if="!movies.length" class="muted">No movies found.</p>
-
 
 <!-- ================= MOVIE PAGINATION ================= -->
 
@@ -243,7 +423,6 @@ Delete
 <p v-if="!allComments.length" class="muted">
 No comments found.
 </p>
-
 
 <!-- ================= COMMENT PAGINATION ================= -->
 
@@ -803,5 +982,43 @@ min-width:36px;
 
 }
 
+/* ================= METRIC HELP ICON ================= */
+
+.metric-help {
+  position: relative;
+  margin-left: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.metric-help:hover {
+  opacity: 1;
+}
+
+/* Tooltip */
+
+.metric-tooltip {
+  position: absolute;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  background: #1e1e1e;
+  color: white;
+
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.metric-help:hover .metric-tooltip {
+  opacity: 1;
+}
 
 </style>

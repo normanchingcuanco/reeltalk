@@ -62,6 +62,8 @@ Administrators have extended privileges for content management and moderation.
 - Moderate comments (Edit / Delete any comment)  
 - Movies sorted alphabetically (A–Z)  
 - Comments sorted newest-first (by `createdAt`)  
+- Movie analytics tables (views, likes, ratings)  
+- Metric tooltips explaining metric formulas  
 
 ---
 
@@ -70,14 +72,14 @@ Administrators have extended privileges for content management and moderation.
 ### Authentication
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+|------|------|------|
 | POST | /users/register | Register new user |
 | POST | /users/login | Authenticate and receive JWT |
 
 ### Movies
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+|------|------|------|
 | GET | /movies/getMovies | Fetch movies with filters & pagination |
 | GET | /movies/getMovie/:id | Fetch single movie |
 | POST | /movies/addMovie | Add movie (authenticated) |
@@ -89,7 +91,7 @@ Administrators have extended privileges for content management and moderation.
 ### Comments
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+|------|------|------|
 | PATCH | /movies/addComment/:id | Add comment |
 | PATCH | /movies/replyComment/:movieId/:commentId | Reply to comment |
 | PATCH | /movies/editComment/:movieId/:commentId | Edit comment |
@@ -99,88 +101,105 @@ Administrators have extended privileges for content management and moderation.
 ### Watchlist
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+|------|------|------|
 | PATCH | /movies/watchlist/:movieId | Toggle watchlist |
 | GET | /movies/watchlist | Get user watchlist |
 
 ### Admin
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+|------|------|------|
 | GET | /movies/admin/dashboard | Platform statistics |
 
 ---
 
-## 📊 Feature Completion Status
+# 📊 Feature Completion Status
 
-### 1. Core Application Features
+---
+
+## 1. Core Application Features
 
 | Feature | Description | Status |
-|----------|-------------|--------|
+|------|------|------|
 | User Registration | Allow users to create an account using email and password | ✅ Complete |
 | User Login (JWT) | Authenticate users securely using JSON Web Tokens | ✅ Complete |
 | Admin Dashboard | Provide administrators with platform metrics and overview | ✅ Complete |
 | Add Movie (OMDb Integration) | Allow users to add movies fetched from OMDb API | ✅ Complete |
 | Update Movie | Allow movie creator or admin to modify movie details | ✅ Complete |
 | Delete Movie | Allow movie creator or admin to remove movies | ✅ Complete |
-| Duplicate Movie Guard | Prevent duplicate movie entries based on title and year | ⚠️ Partial |
+| Duplicate Movie Guard | Prevent duplicate movie entries based on title and year | ✅ Complete |
 | View Single Movie | Display complete movie details and engagement metrics | ✅ Complete |
 | Search by Title | Enable users to search movies by title | ✅ Complete |
 | Filter by Genre | Enable filtering of movies by genre | ✅ Complete |
-| Pagination (Movies) | Limit number of movies per page for performance | ✅ Complete |
-| Sort by Highest Rated | Display movies ordered by highest average rating | ✅ Complete |
-| Sort by Most Liked | Display movies ordered by number of likes | ✅ Complete |
-| Sort by Trending | Rank movies using rating and like combination | ✅ Complete |
-| Track Movie Creator | Store and display which user added the movie | ✅ Complete |
+| Sort Movies | Allow sorting by newest, highest rated, most liked, and trending | ✅ Complete |
+| Movie Pagination | Display movies with page navigation | ✅ Complete |
 
 ---
 
-### 2. Engagement & Social Features
+## 2. Engagement Features
 
 | Feature | Description | Status |
-|----------|-------------|--------|
-| Like Movie | Allow users to like or unlike a movie | ✅ Complete |
-| Prevent Duplicate Movie Likes | Ensure a user can only like a movie once | ✅ Complete |
-| Movie Rating System | Allow users to rate movies from 1–5 stars | ✅ Complete |
-| Automatic Average Rating | Automatically calculate and display average rating | ✅ Complete |
-| Add to Watchlist | Allow users to save movies to personal watchlist | ✅ Complete |
-| Remove from Watchlist | Allow users to remove movies from watchlist | ✅ Complete |
-| View Personal Watchlist | Display user's saved watchlist movies | ✅ Complete |
+|------|------|------|
+| Like Movie | Allow users to like or unlike movies | ✅ Complete |
+| Rate Movie | Allow users to rate movies and calculate average rating | ✅ Complete |
+| Watchlist | Allow users to save movies to their personal watchlist | ✅ Complete |
 | Add Comment | Allow users to comment on movies | ✅ Complete |
-| Reply to Comment | Allow threaded replies to comments | ✅ Complete |
-| Edit Own Comment | Allow users to modify their own comments | ✅ Complete |
-| Delete Own Comment | Allow users to delete their own comments | ✅ Complete |
-| Admin Edit Comment | Allow administrators to edit any comment | ✅ Complete |
-| Admin Delete Comment | Allow administrators to delete any comment | ✅ Complete |
-| Like Comment | Allow users to like a comment | ⚠️ Partial |
-| Dislike Comment | Allow users to dislike a comment | ⚠️ Partial |
-| Prevent Duplicate Comment Reactions | Ensure users cannot react multiple times to same comment | ⚠️ Partial |
+| Nested Replies | Allow replies to existing comments | ✅ Complete |
+| Edit Comment | Allow users to edit their comments | ✅ Complete |
+| Delete Comment | Allow users to delete their comments | ✅ Complete |
+| Like Comment | Allow users to like comments | ✅ Complete |
+| Dislike Comment | Allow users to dislike comments | ✅ Complete |
+| Prevent Duplicate Comment Reactions | Ensure users cannot react multiple times to the same comment | ✅ Complete |
+| Comment Pagination | Paginate top-level comments while preserving replies | ✅ Complete |
 
 ---
 
-### 3. Authentication & Role Control
+## 3. Trending & Discovery
 
 | Feature | Description | Status |
-|----------|-------------|--------|
-| JWT Authentication | Secure protected routes using token-based authentication | ✅ Complete |
-| Role-Based Access Control | Differentiate admin and regular user privileges | ✅ Complete |
-| Creator-Based Authorization | Restrict movie modification to creator or admin | ✅ Complete |
-| Admin Override Permissions | Grant administrators full moderation rights | ✅ Complete |
+|------|------|------|
+| Trending Movies Section | Display top trending movies based on engagement score | ✅ Complete |
+| Trending Ranking Badge | Display ranking numbers for trending movies | ✅ Complete |
+| Trending Sorting | Sort movies based on engagement score | ✅ Complete |
+| Advanced Trending Algorithm | Trending score based on likes, comments, and ratings | ✅ Complete |
 
 ---
 
-### 4. System & Architecture
+## 4. Admin & Moderation Tools
 
 | Feature | Description | Status |
-|----------|-------------|--------|
-| Environment-Based Configuration | Use environment variables for deployment flexibility | ✅ Complete |
-| Database Indexing | Improve query performance using indexed fields | ⚠️ Partial |
-| Pagination for Comments | Implement pagination for large comment threads | ❌ Not Implemented |
-| Centralized Error Handling | Use middleware for unified error responses | ❌ Not Implemented |
-| Input Validation Middleware | Validate requests using structured validation | ❌ Not Implemented |
-| Logging & Monitoring | Add structured logging for production debugging | ❌ Not Implemented |
-| API Documentation | Provide API documentation via Swagger or Postman | ❌ Not Implemented |
-| Caching Layer | Use Redis or caching strategy for performance | ❌ Not Implemented |
+|------|------|------|
+| Admin Movie Management | Admins can update or delete any movie | ✅ Complete |
+| Admin Comment Moderation | Admins can view and delete any comment | ✅ Complete |
+| Admin Metrics Dashboard | Display system-wide statistics for users, movies, comments, ratings, likes, and platform averages | ✅ Complete |
+| Admin Movie Search | Allow admin to filter movies by title and genre | ✅ Complete |
+| Admin Pagination | Paginate movies and comments in admin dashboard | ✅ Complete |
+| Admin Movie Analytics | Display rankings by views, likes, and ratings | ✅ Complete |
+
+---
+
+## 5. Performance & Architecture
+
+| Feature | Description | Status |
+|------|------|------|
+| JWT Authentication Middleware | Protect routes using token validation | ✅ Complete |
+| Structured API Controllers | Organized backend controllers for maintainability | ✅ Complete |
+| RESTful API Design | Consistent REST endpoints across backend services | ✅ Complete |
+| Axios API Layer | Centralized frontend API service for backend communication | ✅ Complete |
+| Database Indexing | Improve query performance using indexed fields | ✅ Complete |
+
+---
+
+## 6. UI / UX Improvements
+
+| Feature | Description | Status |
+|------|------|------|
+| Responsive Layout | Ensure usability across desktop and mobile devices | ✅ Complete |
+| Card-based Movie UI | Display movies in modern card format | ✅ Complete |
+| Pagination Controls | Provide user-friendly navigation between pages | ✅ Complete |
+| Toast Notifications | Provide success/error feedback to users | ✅ Complete |
+| Trending Ranking Badge UI | Highlight trending movies visually | ✅ Complete |
+| Metric Help Widget | Tooltip explaining how each metric is calculated | ✅ Complete |
 
 ---
 
