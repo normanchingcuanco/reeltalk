@@ -104,13 +104,38 @@ exports.addMovie = async (req, res) => {
     const parsedYear = parseInt(data.Year, 10)
     const year = Number.isFinite(parsedYear) ? parsedYear : null
 
+    let posterUrl = null
+
+    // Ignore unreliable Amazon posters from OMDb
+    if (data.Poster && data.Poster !== "N/A" && !data.Poster.includes("amazon")) {
+      posterUrl = data.Poster
+    }
+
+    // 🔥 TMDb fallback if poster missing or unreliable
+    if (!posterUrl && process.env.TMDB_API_KEY) {
+      try {
+        const tmdbUrl = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.TMDB_API_KEY}&query=${encodeURIComponent(data.Title)}`
+
+        const tmdbRes = await axios.get(tmdbUrl)
+
+        const posterPath = tmdbRes?.data?.results?.[0]?.poster_path
+
+        if (posterPath) {
+          posterUrl = `https://image.tmdb.org/t/p/w500${posterPath}`
+        }
+
+      } catch (err) {
+        console.log("TMDB FALLBACK ERROR >>>", err.message)
+      }
+    }
+
     const created = await Movie.create({
       title: data.Title.trim(),
       director: data.Director,
       year,
       description: data.Plot,
       genre: data.Genre,
-      posterUrl: data.Poster !== "N/A" ? data.Poster : null,
+      posterUrl,
       createdBy: req.user.id
     })
 

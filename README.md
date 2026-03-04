@@ -40,6 +40,7 @@ Administrators have extended privileges for content management and moderation.
 ### Logged-In Users
 
 - Add movies via OMDb API integration  
+- Automatic poster fallback using **TMDb API** when OMDb poster is unavailable or broken  
 - View full movie details  
 - Like / Unlike movies  
 - Rate movies (1–5 stars)  
@@ -125,6 +126,7 @@ Administrators have extended privileges for content management and moderation.
 | User Login (JWT) | Authenticate users securely using JSON Web Tokens | ✅ Complete |
 | Admin Dashboard | Provide administrators with platform metrics and overview | ✅ Complete |
 | Add Movie (OMDb Integration) | Allow users to add movies fetched from OMDb API | ✅ Complete |
+| TMDb Poster Fallback | Automatically fetch movie posters from TMDb when OMDb poster is unavailable or broken | ✅ Complete |
 | Update Movie | Allow movie creator or admin to modify movie details | ✅ Complete |
 | Delete Movie | Allow movie creator or admin to remove movies | ✅ Complete |
 | Duplicate Movie Guard | Prevent duplicate movie entries based on title and year | ✅ Complete |
@@ -178,7 +180,7 @@ Administrators have extended privileges for content management and moderation.
 
 ---
 
-## 5. Performance & Architecture
+## 5. Performance, Security & Architecture
 
 | Feature | Description | Status |
 |------|------|------|
@@ -187,6 +189,11 @@ Administrators have extended privileges for content management and moderation.
 | RESTful API Design | Consistent REST endpoints across backend services | ✅ Complete |
 | Axios API Layer | Centralized frontend API service for backend communication | ✅ Complete |
 | Database Indexing | Improve query performance using indexed fields | ✅ Complete |
+| CORS Security Restriction | Restrict API access to approved frontend origins | ✅ Complete |
+| API Rate Limiting | Prevent abuse by limiting requests per IP | ✅ Complete |
+| Helmet Security Headers | Add HTTP security headers to prevent common web attacks | ✅ Complete |
+| API Health Endpoint | Provide `/health` route for monitoring and uptime checks | ✅ Complete |
+| Environment Variable Templates | `.env.example` files added for backend and frontend configuration | ✅ Complete |
 
 ---
 
@@ -261,7 +268,7 @@ reeltalk
 - **Backend:** Node.js + Express  
 - **Database:** MongoDB + Mongoose  
 - **Authentication:** JWT  
-- **External APIs:** OMDb API, Giphy API  
+- **External APIs:** OMDb API, TMDb API, Giphy API  
 - **Deployment:** Render (Backend), Vercel (Frontend)
 
 ---
@@ -275,5 +282,3 @@ reeltalk
 ### Backend API (Render)
 
 🔗 https://reeltalk-api-3sr9.onrender.com
-
----
