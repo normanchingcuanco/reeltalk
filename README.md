@@ -263,3 +263,17 @@ reeltalk
 - **Authentication:** JWT  
 - **External APIs:** OMDb API, Giphy API  
 - **Deployment:** Render (Backend), Vercel (Frontend)
+
+---
+
+## 🌐 Live Deployment
+
+### Frontend (Vercel)
+
+🔗 https://your-vercel-app-url.vercel.app
+
+### Backend API (Render)
+
+🔗 https://your-render-api-url.onrender.com
+
+---
