@@ -210,6 +210,25 @@ Administrators have extended privileges for content management and moderation.
 
 ---
 
+## 📸 Screenshots
+
+### Movies Catalog
+![Movies Catalog](client/public/pages%20images/movies-catalog.jpg)
+
+### Movie Details
+![Movie Details](client/public/pages%20images/movie-details.jpg)
+
+### Watchlist Page
+![Watchlist Page](client/public/pages%20images/watchlist-page.jpg)
+
+### Comment Thread
+![Comment Thread](client/public/pages%20images/comment-thread.jpg)
+
+### Admin Dashboard
+![Admin Dashboard](client/public/pages%20images/admin-dashboard.jpg)
+
+---
+
 ## 📂 Project Structure
 
 ```text
