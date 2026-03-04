@@ -1,492 +1,509 @@
 <template>
 
-  <!-- ================= GLOBAL TOAST ================= -->
-  <div v-if="successMsg || errorMsg" class="toast-wrapper">
-    <div
-      class="toast"
-      :class="successMsg ? 'toast-success' : 'toast-error'"
-    >
-      {{ successMsg || errorMsg }}
-    </div>
+<!-- ================= GLOBAL TOAST ================= -->
+<div v-if="successMsg || errorMsg" class="toast-wrapper">
+  <div class="toast" :class="successMsg ? 'toast-success' : 'toast-error'">
+    {{ successMsg || errorMsg }}
+  </div>
+</div>
+
+<div class="container">
+
+<h2>Admin Dashboard</h2>
+
+<!-- ================= METRICS ================= -->
+<div class="cards">
+
+  <div class="card metric-card">
+    <div class="label">Total Users</div>
+    <div class="value">{{ metrics.totalUsers }}</div>
   </div>
 
-  <div class="container">
-    <h2>Admin Dashboard</h2>
-
-    <!-- ================= METRICS ================= -->
-    <div class="cards">
-      <div class="card metric-card">
-        <div class="label">Total Users</div>
-        <div class="value">{{ metrics.totalUsers }}</div>
-      </div>
-
-      <div class="card metric-card">
-        <div class="label">Total Movies</div>
-        <div class="value">{{ metrics.totalMovies }}</div>
-      </div>
-
-      <div class="card metric-card">
-        <div class="label">Total Comments</div>
-        <div class="value">{{ metrics.totalComments }}</div>
-      </div>
-
-      <div class="card metric-card">
-        <div class="label">Total Ratings</div>
-        <div class="value">{{ metrics.totalRatings }}</div>
-      </div>
-
-      <div class="card metric-card">
-        <div class="label">Total Movie Likes</div>
-        <div class="value">{{ metrics.totalMovieLikes }}</div>
-      </div>
-    </div>
-
-    <hr />
-
-    <!-- ================= SEARCH SECTION ================= -->
-    <form class="search-section card" @submit.prevent="fetchMovies">
-      <div class="search-fields">
-        <input v-model="search" placeholder="Search by title..." />
-        <input v-model="genre" placeholder="Filter by genre..." />
-      </div>
-
-      <div class="search-actions">
-        <button type="submit" class="primary">Search</button>
-        <button type="button" class="secondary" @click="resetFilters">
-          Reset
-        </button>
-      </div>
-    </form>
-
-    <hr />
-
-    <!-- ================= ADD MOVIE ================= -->
-    <h3>Add Movie (OMDb)</h3>
-
-    <form class="form" @submit.prevent="addMovieByTitle">
-      <input
-        v-model="newTitle"
-        placeholder="Enter movie title (e.g. Inception)"
-      />
-      <button type="submit" class="primary">
-        Add Movie
-      </button>
-    </form>
-
-    <hr />
-
-    <!-- ================= MOVIES SECTION ================= -->
-    <div class="section-header" ref="moviesSection">
-      <h3>Movies</h3>
-    </div>
-
-    <div class="table-wrapper">
-      <table v-if="movies.length">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Director</th>
-            <th>Year</th>
-            <th>Genre</th>
-            <th>Description</th>
-            <th>Likes</th>
-            <th>Rating</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr v-for="movie in movies" :key="movie._id">
-            <td>{{ movie.title }}</td>
-            <td>{{ movie.director || "—" }}</td>
-            <td>{{ movie.year || "—" }}</td>
-            <td>{{ movie.genre || "—" }}</td>
-            <td class="description-cell">
-              {{ movie.description || "—" }}
-            </td>
-            <td>{{ movie.likes?.length || 0 }}</td>
-            <td>{{ (movie.averageRating || 0).toFixed(1) }}</td>
-            <td class="actions-cell">
-              <button class="primary" @click="startEdit(movie)">
-                Update
-              </button>
-              <button class="danger" @click="deleteMovie(movie._id)">
-                Delete
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p v-if="!movies.length" class="muted">No movies found.</p>
-
-    <!-- ================= ALL COMMENTS ================= -->
-    <hr />
-
-    <div class="section-header">
-      <h3>All Comments</h3>
-      <button class="secondary" @click="fetchAllComments">
-        Refresh
-      </button>
-    </div>
-
-    <div class="table-wrapper">
-      <table v-if="allComments.length">
-        <thead>
-          <tr>
-            <th>Movie</th>
-            <th>User</th>
-            <th>Comment</th>
-            <th>Parent</th>
-            <th>👍</th>
-            <th>👎</th>
-            <th>Created</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr v-for="c in allComments" :key="c.commentId">
-            <td>
-              <router-link
-                :to="`/movies/${c.movieId}`"
-                class="movie-link"
-              >
-                {{ c.movieTitle }}
-              </router-link>
-            </td>
-
-            <td>{{ c.username }}</td>
-
-            <td class="comment-cell">
-              {{ c.comment }}
-            </td>
-
-            <td>
-              {{ c.parentCommentId ? "Reply" : "Top-level" }}
-            </td>
-
-            <td>{{ c.likes }}</td>
-            <td>{{ c.dislikes }}</td>
-            <td>{{ formatDate(c.createdAt) }}</td>
-
-            <td class="actions-cell">
-              <button class="primary" @click="startEditComment(c)">
-                Edit
-              </button>
-              <button class="danger" @click="deleteComment(c)">
-                Delete
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p v-if="!allComments.length" class="muted">
-      No comments found.
-    </p>
+  <div class="card metric-card">
+    <div class="label">Total Movies</div>
+    <div class="value">{{ metrics.totalMovies }}</div>
   </div>
 
-  <!-- ================= EDIT MOVIE MODAL ================= -->
-  <div
-    v-if="editingMovie"
-    class="modal-overlay"
-    @click.self="editingMovie = null"
-  >
-    <div class="modal">
-      <h3>Edit Movie</h3>
-
-      <input v-model="editingMovie.title" placeholder="Title" />
-      <input v-model="editingMovie.director" placeholder="Director" />
-      <input v-model="editingMovie.year" type="number" placeholder="Year" />
-      <input v-model="editingMovie.genre" placeholder="Genre" />
-      <textarea
-        v-model="editingMovie.description"
-        placeholder="Description"
-      ></textarea>
-
-      <div class="modal-actions">
-        <button class="primary" @click="updateMovie">Save</button>
-        <button class="secondary" @click="editingMovie = null">
-          Cancel
-        </button>
-      </div>
-    </div>
+  <div class="card metric-card">
+    <div class="label">Total Comments</div>
+    <div class="value">{{ metrics.totalComments }}</div>
   </div>
 
-  <!-- ================= EDIT COMMENT MODAL ================= -->
-  <div
-    v-if="editingComment"
-    class="modal-overlay"
-    @click.self="editingComment = null"
-  >
-    <div class="modal">
-      <h3>Edit Comment</h3>
-
-      <textarea
-        v-model="editingComment.comment"
-        placeholder="Edit comment..."
-      ></textarea>
-
-      <div class="modal-actions">
-        <button class="primary" @click="updateComment">
-          Save
-        </button>
-
-        <button
-          class="secondary"
-          @click="editingComment = null"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
+  <div class="card metric-card">
+    <div class="label">Total Ratings</div>
+    <div class="value">{{ metrics.totalRatings }}</div>
   </div>
+
+  <div class="card metric-card">
+    <div class="label">Total Movie Likes</div>
+    <div class="value">{{ metrics.totalMovieLikes }}</div>
+  </div>
+
+</div>
+
+<hr />
+
+<!-- ================= SEARCH ================= -->
+<form class="search-section card" @submit.prevent="searchMovies">
+
+  <div class="search-fields">
+    <input v-model="search" placeholder="Search by title..." />
+    <input v-model="genre" placeholder="Filter by genre..." />
+  </div>
+
+  <div class="search-actions">
+    <button class="primary">Search</button>
+    <button type="button" class="secondary" @click="resetFilters">
+      Reset
+    </button>
+  </div>
+
+</form>
+
+<hr />
+
+<!-- ================= ADD MOVIE ================= -->
+<h3>Add Movie (OMDb)</h3>
+
+<form class="form" @submit.prevent="addMovieByTitle">
+  <input v-model="newTitle" placeholder="Enter movie title" />
+  <button class="primary">Add Movie</button>
+</form>
+
+<hr />
+
+<!-- ================= MOVIES ================= -->
+
+<div class="section-header" ref="moviesSection">
+<h3>Movies</h3>
+</div>
+
+<div class="table-wrapper">
+
+<table v-if="movies.length">
+
+<thead>
+<tr>
+<th>Title</th>
+<th>Director</th>
+<th>Year</th>
+<th>Genre</th>
+<th>Description</th>
+<th>Likes</th>
+<th>Rating</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr v-for="movie in movies" :key="movie._id">
+
+<td>{{ movie.title }}</td>
+<td>{{ movie.director || "—" }}</td>
+<td>{{ movie.year || "—" }}</td>
+<td>{{ movie.genre || "—" }}</td>
+
+<td class="description-cell">
+{{ movie.description || "—" }}
+</td>
+
+<td>{{ movie.likes?.length || 0 }}</td>
+<td>{{ (movie.averageRating || 0).toFixed(1) }}</td>
+
+<td class="actions-cell">
+
+<button class="primary" @click="startEdit(movie)">
+Update
+</button>
+
+<button class="danger" @click="deleteMovie(movie._id)">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<p v-if="!movies.length" class="muted">No movies found.</p>
+
+
+<!-- ================= MOVIE PAGINATION ================= -->
+
+<div v-if="movieTotalPages > 1" class="pagination">
+
+<button
+class="secondary"
+:disabled="moviePage === 1"
+@click="prevMoviePage"
+>
+‹
+</button>
+
+<button
+v-for="page in moviePages"
+:key="page"
+:class="page === moviePage ? 'primary' : 'secondary'"
+@click="goToMoviePage(page)"
+>
+{{ page }}
+</button>
+
+<button
+class="secondary"
+:disabled="moviePage === movieTotalPages"
+@click="nextMoviePage"
+>
+›
+</button>
+
+</div>
+
+<hr />
+
+<!-- ================= COMMENTS ================= -->
+
+<div class="section-header">
+<h3>All Comments</h3>
+
+<button class="secondary" @click="resetComments">
+Refresh
+</button>
+
+</div>
+
+<div class="table-wrapper">
+
+<table v-if="allComments.length">
+
+<thead>
+<tr>
+<th>Movie</th>
+<th>User</th>
+<th>Comment</th>
+<th>Parent</th>
+<th>👍</th>
+<th>👎</th>
+<th>Created</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr v-for="c in allComments" :key="c.commentId">
+
+<td>
+<router-link :to="`/movies/${c.movieId}`" class="movie-link">
+{{ c.movieTitle }}
+</router-link>
+</td>
+
+<td>{{ c.username }}</td>
+
+<td class="comment-cell">
+{{ c.comment }}
+</td>
+
+<td>
+{{ c.parentCommentId ? "Reply" : "Top-level" }}
+</td>
+
+<td>{{ c.likes }}</td>
+<td>{{ c.dislikes }}</td>
+
+<td>{{ formatDate(c.createdAt) }}</td>
+
+<td class="actions-cell">
+
+<button class="primary" @click="startEditComment(c)">
+Edit
+</button>
+
+<button class="danger" @click="deleteComment(c)">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<p v-if="!allComments.length" class="muted">
+No comments found.
+</p>
+
+
+<!-- ================= COMMENT PAGINATION ================= -->
+
+<div v-if="commentTotalPages > 1" class="pagination">
+
+<button
+class="secondary"
+:disabled="commentPage === 1"
+@click="prevCommentPage"
+>
+‹
+</button>
+
+<button
+v-for="page in commentPages"
+:key="page"
+:class="page === commentPage ? 'primary' : 'secondary'"
+@click="goToCommentPage(page)"
+>
+{{ page }}
+</button>
+
+<button
+class="secondary"
+:disabled="commentPage === commentTotalPages"
+@click="nextCommentPage"
+>
+›
+</button>
+
+</div>
+
+</div>
 
 </template>
 
 <script>
+
 import api from "../api"
 import { useAuthStore } from "../auth"
 
 export default {
-  setup() {
-    const auth = useAuthStore()
-    return { auth }
-  },
 
-  data() {
-    return {
-      metrics: {},
-      movies: [],
-      allComments: [],
-      search: "",
-      genre: "",
-      newTitle: "",
-      editingMovie: null,
-      editingComment: null,
-      isAdding: false,
-      errorMsg: "",
-      successMsg: ""
-    }
-  },
+setup() {
+const auth = useAuthStore()
+return { auth }
+},
 
-  async mounted() {
-    await this.refreshAll()
-  },
+data() {
+return {
 
-  methods: {
-    authHeaders() {
-      return { Authorization: `Bearer ${this.auth.token}` }
-    },
+metrics: {},
 
-    formatDate(value) {
-      if (!value) return "—"
-      return new Date(value).toLocaleString()
-    },
+movies: [],
+moviePage: 1,
+movieLimit: 10,
+movieTotalPages: 1,
 
-    async refreshAll() {
-      await this.fetchMetrics()
-      await this.fetchMovies(false)   // disable scroll
-      await this.fetchAllComments()
-    },
+allComments: [],
+commentPage: 1,
+commentLimit: 10,
+commentTotalPages: 1,
 
-    async fetchMetrics() {
-      const res = await api.get("/movies/admin/dashboard", {
-        headers: this.authHeaders()
-      })
-      this.metrics = res.data
-    },
+search: "",
+genre: "",
 
-    // ✅ UPDATED: Uses admin endpoint (sorted A → Z from backend)
-    async fetchMovies(shouldScroll = true) {
-      const res = await api.get("/movies/getMovies", {
-        params: {
-          search: this.search || "",
-          genre: this.genre || "",
-          page: 1,
-          limit: 50,
-          sort: "titleAsc"
-        }
-      })
+newTitle: "",
 
-      this.movies = res.data.movies || []
+editingMovie: null,
+editingComment: null,
 
-      if (shouldScroll) {
-        this.$nextTick(() => {
-          const el = this.$refs.moviesSection
-          if (el) {
-            const y =
-              el.getBoundingClientRect().top +
-              window.pageYOffset -
-              100
+successMsg: "",
+errorMsg: ""
 
-            window.scrollTo({
-              top: y,
-              behavior: "smooth"
-            })
-          }
-        })
-      }
-    },
-
-    resetFilters() {
-      this.search = ""
-      this.genre = ""
-      this.fetchMovies()
-    },
-
-    async addMovieByTitle() {
-      const title = this.newTitle.trim()
-      if (!title) return
-
-      this.isAdding = true
-      this.errorMsg = ""
-      this.successMsg = ""
-
-      try {
-        await api.post(
-          "/movies/addMovie",
-          { title },
-          { headers: this.authHeaders() }
-        )
-
-        this.successMsg = `"${title}" was added successfully.`
-        this.newTitle = ""
-
-        await this.refreshAll()
-
-      } catch (error) {
-        this.errorMsg =
-          error.response?.data?.message ||
-          "Could not find movie in OMDb."
-
-      } finally {
-        this.isAdding = false
-
-        setTimeout(() => {
-          this.successMsg = ""
-          this.errorMsg = ""
-        }, 3000)
-      }
-    },
-
-    /* ================= MOVIE EDIT ================= */
-
-    startEdit(movie) {
-      this.editingMovie = { ...movie }
-    },
-
-    async updateMovie() {
-      try {
-        await api.patch(
-          `/movies/updateMovie/${this.editingMovie._id}`,
-          this.editingMovie,
-          { headers: this.authHeaders() }
-        )
-
-        this.editingMovie = null
-        await this.fetchMovies(false)
-
-        this.successMsg = "Movie updated successfully."
-
-      } catch (error) {
-        this.errorMsg =
-          error.response?.data?.message ||
-          "Failed to update movie."
-      }
-
-      setTimeout(() => {
-        this.successMsg = ""
-        this.errorMsg = ""
-      }, 3000)
-    },
-
-    async deleteMovie(id) {
-      this.successMsg = ""
-      this.errorMsg = ""
-
-      try {
-        await api.delete(`/movies/deleteMovie/${id}`, {
-          headers: this.authHeaders()
-        })
-
-        this.successMsg = "Movie successfully deleted."
-
-        await this.fetchMovies(false)
-        await this.fetchMetrics()
-
-      } catch (error) {
-        this.errorMsg =
-          error.response?.data?.message ||
-          "Failed to delete movie."
-      }
-
-      setTimeout(() => {
-        this.successMsg = ""
-        this.errorMsg = ""
-      }, 3000)
-    },
-
-    /* ================= COMMENTS ================= */
-
-    async fetchAllComments() {
-      const res = await api.get("/movies/admin/getAllComments", {
-        headers: this.authHeaders()
-      })
-      this.allComments = res.data.comments || []
-    },
-
-    startEditComment(comment) {
-      this.editingComment = { ...comment }
-    },
-
-    async updateComment() {
-      if (!this.editingComment?.comment?.trim()) return
-
-      try {
-        await api.patch(
-          `/movies/editComment/${this.editingComment.movieId}/${this.editingComment.commentId}`,
-          { comment: this.editingComment.comment },
-          { headers: this.authHeaders() }
-        )
-
-        this.editingComment = null
-        await this.fetchAllComments()
-
-        this.successMsg = "Comment updated successfully."
-
-      } catch (error) {
-        this.errorMsg =
-          error.response?.data?.message ||
-          "Failed to update comment."
-      }
-
-      setTimeout(() => {
-        this.successMsg = ""
-        this.errorMsg = ""
-      }, 3000)
-    },
-
-    async deleteComment(comment) {
-      await api.delete(
-        `/movies/deleteComment/${comment.movieId}/${comment.commentId}`,
-        { headers: this.authHeaders() }
-      )
-
-      await this.fetchAllComments()
-      await this.fetchMetrics()
-
-      this.successMsg = "Comment deleted successfully."
-
-      setTimeout(() => {
-        this.successMsg = ""
-      }, 3000)
-    }
-  }
 }
+},
+
+computed: {
+
+moviePages() {
+return Array.from({ length: this.movieTotalPages }, (_, i) => i + 1)
+},
+
+commentPages() {
+return Array.from({ length: this.commentTotalPages }, (_, i) => i + 1)
+}
+
+},
+
+async mounted() {
+await this.refreshAll()
+},
+
+methods: {
+
+authHeaders() {
+return { Authorization: `Bearer ${this.auth.token}` }
+},
+
+formatDate(value) {
+if (!value) return "—"
+return new Date(value).toLocaleString()
+},
+
+async refreshAll() {
+await this.fetchMetrics()
+await this.fetchMovies()
+await this.fetchAllComments()
+},
+
+async fetchMetrics() {
+
+const res = await api.get(
+"/movies/admin/dashboard",
+{ headers: this.authHeaders() }
+)
+
+this.metrics = res.data
+
+},
+
+async fetchMovies() {
+
+const res = await api.get("/movies/getMovies", {
+params: {
+search: this.search,
+genre: this.genre,
+page: this.moviePage,
+limit: this.movieLimit,
+sort: "titleAsc"
+}
+})
+
+this.movies = res.data.movies || []
+this.movieTotalPages = res.data.totalPages || 1
+
+},
+
+goToMoviePage(page) {
+this.moviePage = page
+this.fetchMovies()
+},
+
+nextMoviePage() {
+if (this.moviePage < this.movieTotalPages) {
+this.moviePage++
+this.fetchMovies()
+}
+},
+
+prevMoviePage() {
+if (this.moviePage > 1) {
+this.moviePage--
+this.fetchMovies()
+}
+},
+
+searchMovies() {
+this.moviePage = 1
+this.fetchMovies()
+},
+
+resetFilters() {
+this.search = ""
+this.genre = ""
+this.moviePage = 1
+this.fetchMovies()
+},
+
+async addMovieByTitle() {
+
+if (!this.newTitle.trim()) return
+
+await api.post(
+"/movies/addMovie",
+{ title: this.newTitle },
+{ headers: this.authHeaders() }
+)
+
+this.newTitle = ""
+this.fetchMovies()
+
+},
+
+startEdit(movie) {
+this.editingMovie = { ...movie }
+},
+
+async deleteMovie(id) {
+
+await api.delete(
+`/movies/deleteMovie/${id}`,
+{ headers: this.authHeaders() }
+)
+
+this.fetchMovies()
+
+},
+
+async fetchAllComments() {
+
+const res = await api.get(
+"/movies/admin/getAllComments",
+{
+params: {
+page: this.commentPage,
+limit: this.commentLimit
+},
+headers: this.authHeaders()
+}
+)
+
+this.allComments = res.data.comments || []
+this.commentTotalPages = res.data.totalPages || 1
+
+},
+
+resetComments() {
+this.commentPage = 1
+this.fetchAllComments()
+},
+
+goToCommentPage(page) {
+this.commentPage = page
+this.fetchAllComments()
+},
+
+nextCommentPage() {
+if (this.commentPage < this.commentTotalPages) {
+this.commentPage++
+this.fetchAllComments()
+}
+},
+
+prevCommentPage() {
+if (this.commentPage > 1) {
+this.commentPage--
+this.fetchAllComments()
+}
+},
+
+startEditComment(comment) {
+this.editingComment = { ...comment }
+},
+
+async deleteComment(comment) {
+
+await api.delete(
+`/movies/deleteComment/${comment.movieId}/${comment.commentId}`,
+{ headers: this.authHeaders() }
+)
+
+this.fetchAllComments()
+
+}
+
+}
+
+}
+
 </script>
 
 <style scoped>
@@ -751,6 +768,18 @@ td {
   color: white;
 }
 
+.pagination {
+display:flex;
+gap:8px;
+margin-top:20px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.pagination button {
+min-width:36px;
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -773,5 +802,6 @@ td {
   }
 
 }
+
 
 </style>

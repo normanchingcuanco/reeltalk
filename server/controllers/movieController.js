@@ -95,30 +95,38 @@ exports.addMovie = async (req, res) => {
     }
 
     if (omdbRes.data.Response === "False") {
-      return res.status(404).json({ message: omdbRes.data.Error || "Movie not found in OMDb." })
+      return res.status(404).json({
+        message: omdbRes.data.Error || "Movie not found in OMDb."
+      })
     }
 
     const data = omdbRes.data
     const parsedYear = parseInt(data.Year, 10)
-    const year = Number.isFinite(parsedYear) ? parsedYear : undefined
+    const year = Number.isFinite(parsedYear) ? parsedYear : null
 
     const created = await Movie.create({
-      title: data.Title,
+      title: data.Title.trim(),
       director: data.Director,
       year,
       description: data.Plot,
       genre: data.Genre,
-      posterUrl: data.Poster,
+      posterUrl: data.Poster !== "N/A" ? data.Poster : null,
       createdBy: req.user.id
     })
 
-    return res.status(201).json({ message: "Movie added successfully", movie: created })
+    return res.status(201).json({
+      message: "Movie added successfully",
+      movie: created
+    })
+
   } catch (error) {
     console.log("ADD MOVIE ERROR >>>", error?.message)
-    console.log("ADD MOVIE ERROR FULL >>>", error)
 
-    if (error.code === 11000) {
-      return res.status(400).json({ message: "Movie already exists (same title and year)." })
+    // ✅ Proper duplicate key handling (Mongo unique index)
+    if (error?.code === 11000) {
+      return res.status(400).json({
+        message: "Movie already exists (same title and year)."
+      })
     }
 
     const msg =
@@ -344,21 +352,38 @@ exports.rateMovie = async (req, res) => {
 }
 
 // ===============================
-// GET COMMENTS (THREADED + POPULATE USERNAME)
+// GET COMMENTS (THREADED + PAGINATION)
 // ===============================
 exports.getComments = async (req, res) => {
   try {
+
+    const page = Math.max(1, Number(req.query.page) || 1)
+    const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10))
+
     const movie = await Movie.findById(req.params.id)
       .populate("comments.userId", "username")
 
-    if (!movie) return res.status(404).json({ message: "Movie not found" })
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found" })
+    }
 
+    // Build threaded structure first
     const threadedComments = buildThreadedComments(movie.comments)
 
+    const totalComments = threadedComments.length
+
+    const startIndex = (page - 1) * limit
+    const endIndex = startIndex + limit
+
+    const paginatedComments = threadedComments.slice(startIndex, endIndex)
+
     return res.status(200).json({
-      comments: movie.comments,
-      threadedComments
+      totalComments,
+      currentPage: page,
+      totalPages: Math.ceil(totalComments / limit),
+      comments: paginatedComments
     })
+
   } catch (error) {
     return res.status(500).json({ message: "Server error" })
   }
@@ -493,13 +518,13 @@ exports.deleteComment = async (req, res) => {
 }
 
 // ===============================
-// LIKE / DISLIKE COMMENT (PREVENT DUPES)
+// LIKE / DISLIKE COMMENT (PREVENT DUPES + TOGGLE)
 // ===============================
 exports.reactToComment = async (req, res) => {
   try {
     const { movieId, commentId } = req.params
     const { type } = req.body
-    const userId = req.user.id
+    const userId = String(req.user.id)
 
     if (!["like", "dislike"].includes(type)) {
       return res.status(400).json({ message: "Invalid reaction type" })
@@ -511,11 +536,31 @@ exports.reactToComment = async (req, res) => {
     const comment = movie.comments.id(commentId)
     if (!comment) return res.status(404).json({ message: "Comment not found" })
 
-    comment.likes = comment.likes.filter((id) => String(id) !== String(userId))
-    comment.dislikes = comment.dislikes.filter((id) => String(id) !== String(userId))
+    const hasLiked = (comment.likes || []).some((id) => String(id) === userId)
+    const hasDisliked = (comment.dislikes || []).some((id) => String(id) === userId)
 
-    if (type === "like") comment.likes.push(userId)
-    if (type === "dislike") comment.dislikes.push(userId)
+    // ✅ TOGGLE LOGIC + MUTUAL EXCLUSIVITY
+    if (type === "like") {
+      if (hasLiked) {
+        // toggle off like
+        comment.likes = comment.likes.filter((id) => String(id) !== userId)
+      } else {
+        // add like + remove dislike if present
+        comment.dislikes = comment.dislikes.filter((id) => String(id) !== userId)
+        comment.likes.push(userId)
+      }
+    }
+
+    if (type === "dislike") {
+      if (hasDisliked) {
+        // toggle off dislike
+        comment.dislikes = comment.dislikes.filter((id) => String(id) !== userId)
+      } else {
+        // add dislike + remove like if present
+        comment.likes = comment.likes.filter((id) => String(id) !== userId)
+        comment.dislikes.push(userId)
+      }
+    }
 
     await movie.save()
 
@@ -530,15 +575,17 @@ exports.reactToComment = async (req, res) => {
 }
 
 // ===============================
-// GET ALL COMMENTS (ADMIN EXTRACTION)
+// GET ALL COMMENTS (ADMIN EXTRACTION + PAGINATION)
 // ===============================
 exports.getAllCommentsAdmin = async (req, res) => {
   try {
 
-    // 🔒 Ensure only admins can access
     if (!req.user?.isAdmin) {
       return res.status(403).json({ message: "Access denied" })
     }
+
+    const page = Math.max(1, Number(req.query.page) || 1)
+    const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 20))
 
     const movies = await Movie.find()
       .populate("comments.userId", "username")
@@ -562,15 +609,24 @@ exports.getAllCommentsAdmin = async (req, res) => {
       })
     })
 
-    // ✅ SORT COMMENTS BY NEWEST FIRST (createdAt DESC)
+    // Sort newest first
     allComments.sort((a, b) => b.createdAt - a.createdAt)
 
+    const totalComments = allComments.length
+    const startIndex = (page - 1) * limit
+    const endIndex = startIndex + limit
+
+    const paginated = allComments.slice(startIndex, endIndex)
+
     return res.status(200).json({
-      totalComments: allComments.length,
-      comments: allComments
+      totalComments,
+      currentPage: page,
+      totalPages: Math.ceil(totalComments / limit),
+      comments: paginated
     })
 
   } catch (error) {
+    console.log("ADMIN COMMENTS ERROR >>>", error)
     return res.status(500).json({ message: "Server error" })
   }
 }
@@ -665,22 +721,36 @@ exports.getAdminDashboard = async (req, res) => {
 }
 
 // ===============================
-// ADMIN - GET ALL MOVIES (NO PAGINATION)
+// ADMIN - GET ALL MOVIES (PAGINATION)
 // ===============================
 exports.getAllMoviesAdmin = async (req, res) => {
   try {
+
     if (!req.user || req.user.isAdmin !== true) {
       return res.status(403).json({ message: "Unauthorized" })
     }
 
-    // ✅ Sort alphabetically by title (A → Z), case-insensitive
+    const page = Math.max(1, Number(req.query.page) || 1)
+    const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 20))
+    const skip = (page - 1) * limit
+
+    const totalMovies = await Movie.countDocuments()
+
     const movies = await Movie.find({})
       .collation({ locale: "en", strength: 2 })
       .sort({ title: 1 })
+      .skip(skip)
+      .limit(limit)
 
-    return res.status(200).json({ movies })
+    return res.status(200).json({
+      totalMovies,
+      currentPage: page,
+      totalPages: Math.ceil(totalMovies / limit),
+      movies
+    })
+
   } catch (error) {
-    console.log("ADMIN GET ALL MOVIES ERROR >>>", error)
+    console.log("ADMIN MOVIES ERROR >>>", error)
     return res.status(500).json({ message: "Server error" })
   }
 }

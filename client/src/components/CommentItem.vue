@@ -121,6 +121,11 @@ export default {
   name: "CommentItem",
   props: ["comment", "movieId"],
 
+  setup() {
+    const auth = useAuthStore()
+    return { auth }
+  },
+
   data() {
     return {
       showReply: false,
@@ -128,7 +133,6 @@ export default {
       isEditing: false,
       editText: "",
 
-      // 🔥 NEW SAFE ADDITIONS
       showEmojiPanel: false,
       showGifPicker: false,
       gifSearch: "",
@@ -140,11 +144,6 @@ export default {
       ],
       gf: new GiphyFetch(import.meta.env.VITE_GIPHY_API_KEY)
     }
-  },
-
-  setup() {
-    const auth = useAuthStore()
-    return { auth }
   },
 
   computed: {

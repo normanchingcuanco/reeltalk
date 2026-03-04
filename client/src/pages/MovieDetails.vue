@@ -117,6 +117,11 @@
 
     <!-- ================= THREAD ================= -->
     <div v-if="threadedComments.length">
+      <div v-if="page < totalPages" style="margin-top:20px;">
+        <button class="primary" @click="loadMoreComments">
+          Load More Comments
+        </button>
+      </div>
       <CommentItem
         v-for="c in threadedComments"
         :key="c._id"
@@ -154,6 +159,11 @@ export default {
       threadedComments: [],
       selectedRating: "",
       watchlistIds: [],
+
+      // NEW PAGINATION STATE
+      page: 1,
+      limit: 10,
+      totalPages: 1,
 
       showEmojiPanel: false,
       showGifPicker: false,
@@ -235,11 +245,36 @@ export default {
       this.movie = res.data.movie
     },
 
-    async fetchComments() {
+    async fetchComments(reset = false) {
+
+      if (reset) {
+        this.page = 1
+        this.threadedComments = []
+      }
+
       const res = await api.get(
-        `/movies/getComments/${this.$route.params.id}`
+        `/movies/getComments/${this.$route.params.id}?page=${this.page}&limit=${this.limit}`
       )
-      this.threadedComments = res.data.threadedComments || []
+
+      const newComments = res.data.comments || []
+
+      if (this.page === 1) {
+        this.threadedComments = newComments
+      } else {
+        this.threadedComments = [
+          ...this.threadedComments,
+          ...newComments
+        ]
+      }
+
+      this.totalPages = res.data.totalPages
+    },
+
+    async loadMoreComments() {
+      if (this.page >= this.totalPages) return
+
+      this.page++
+      await this.fetchComments()
     },
 
     async fetchWatchlist() {
@@ -255,7 +290,7 @@ export default {
 
     async refreshAll() {
       await this.fetchMovie()
-      await this.fetchComments()
+      await this.fetchComments(true)
     },
 
     async toggleLike() {
@@ -325,7 +360,7 @@ export default {
       this.showEmojiPanel = false
       this.showGifPicker = false
 
-      await this.fetchComments()
+      await this.fetchComments(true)
     },
 
     selectGif(gif) {
