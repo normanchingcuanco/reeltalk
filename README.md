@@ -270,10 +270,10 @@ reeltalk
 
 ### Frontend (Vercel)
 
-🔗 https://your-vercel-app-url.vercel.app
+🔗 https://reeltalk-rho.vercel.app
 
 ### Backend API (Render)
 
-🔗 https://your-render-api-url.onrender.com
+🔗 https://reeltalk-api-3sr9.onrender.com
 
 ---

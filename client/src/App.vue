@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { computed } from "vue"
+import { computed, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "./auth"
 import Sidebar from "./components/Navbar.vue"
@@ -22,6 +22,13 @@ export default {
 
     // Hide sidebar on login/register routes
     const showSidebar = computed(() => route.meta?.hideSidebar !== true)
+
+    // 🔥 Render cold start warm-up
+    onMounted(() => {
+      fetch("https://reeltalk-api-3sr9.onrender.com")
+        .then(() => console.log("Backend warm-up ping sent"))
+        .catch(() => console.log("Backend warm-up ping failed"))
+    })
 
     return { auth, showSidebar }
   }
