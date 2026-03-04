@@ -205,48 +205,49 @@ Administrators have extended privileges for content management and moderation.
 
 ## 📂 Project Structure
 
+```text
 reeltalk
 │
 ├── server
-│ ├── controllers
-│ │ ├── userController.js
-│ │ └── movieController.js
-│ │
-│ ├── models
-│ │ ├── User.js
-│ │ └── Movie.js
-│ │
-│ ├── routes
-│ │ ├── userRoutes.js
-│ │ └── movieRoutes.js
-│ │
-│ ├── middleware
-│ │ └── auth.js
-│ │
-│ └── server.js
+│   ├── controllers
+│   │   ├── userController.js
+│   │   └── movieController.js
+│   │
+│   ├── models
+│   │   ├── User.js
+│   │   └── Movie.js
+│   │
+│   ├── routes
+│   │   ├── userRoutes.js
+│   │   └── movieRoutes.js
+│   │
+│   ├── middleware
+│   │   └── auth.js
+│   │
+│   └── server.js
 │
 ├── client
-│ ├── src
-│ │ ├── components
-│ │ │ └── MovieCard.vue
-│ │ │
-│ │ ├── pages
-│ │ │ ├── Movies.vue
-│ │ │ ├── MovieDetails.vue
-│ │ │ ├── Watchlist.vue
-│ │ │ ├── Login.vue
-│ │ │ ├── Register.vue
-│ │ │ └── AdminDashboard.vue
-│ │ │
-│ │ ├── router
-│ │ │ └── index.js
-│ │ │
-│ │ ├── api.js
-│ │ ├── auth.js
-│ │ ├── main.js
-│ │ └── style.css
-│ │
-│ └── vite.config.js
+│   ├── src
+│   │   ├── components
+│   │   │   └── MovieCard.vue
+│   │   │
+│   │   ├── pages
+│   │   │   ├── Movies.vue
+│   │   │   ├── MovieDetails.vue
+│   │   │   ├── Watchlist.vue
+│   │   │   ├── Login.vue
+│   │   │   ├── Register.vue
+│   │   │   └── AdminDashboard.vue
+│   │   │
+│   │   ├── router
+│   │   │   └── index.js
+│   │   │
+│   │   ├── api.js
+│   │   ├── auth.js
+│   │   ├── main.js
+│   │   └── style.css
+│   │
+│   └── vite.config.js
 │
 └── README.md
 
