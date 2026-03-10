@@ -349,7 +349,7 @@ class="secondary"
 
 <!-- ================= COMMENTS ================= -->
 
-<div class="section-header">
+<div class="section-header" ref="commentsSection">
 <h3>All Comments</h3>
 
 <button class="secondary" @click="resetComments">
@@ -527,6 +527,28 @@ if (!value) return "—"
 return new Date(value).toLocaleString()
 },
 
+scrollToMovies() {
+const section = this.$refs.moviesSection
+
+if (section) {
+section.scrollIntoView({
+behavior: "smooth",
+block: "start"
+})
+}
+},
+
+scrollToComments() {
+const section = this.$refs.commentsSection
+
+if (section) {
+section.scrollIntoView({
+behavior: "smooth",
+block: "start"
+})
+}
+},
+
 async refreshAll() {
 await this.fetchMetrics()
 await this.fetchMovies()
@@ -564,12 +586,20 @@ this.movieTotalPages = res.data.totalPages || 1
 goToMoviePage(page) {
 this.moviePage = page
 this.fetchMovies()
+
+this.$nextTick(() => {
+this.scrollToMovies()
+})
 },
 
 nextMoviePage() {
 if (this.moviePage < this.movieTotalPages) {
 this.moviePage++
 this.fetchMovies()
+
+this.$nextTick(() => {
+this.scrollToMovies()
+})
 }
 },
 
@@ -577,12 +607,20 @@ prevMoviePage() {
 if (this.moviePage > 1) {
 this.moviePage--
 this.fetchMovies()
+
+this.$nextTick(() => {
+this.scrollToMovies()
+})
 }
 },
 
 searchMovies() {
 this.moviePage = 1
 this.fetchMovies()
+
+this.$nextTick(() => {
+this.scrollToMovies()
+})
 },
 
 resetFilters() {
@@ -590,6 +628,10 @@ this.search = ""
 this.genre = ""
 this.moviePage = 1
 this.fetchMovies()
+
+this.$nextTick(() => {
+this.scrollToMovies()
+})
 },
 
 async addMovieByTitle() {
@@ -605,6 +647,10 @@ await api.post(
 this.newTitle = ""
 this.fetchMovies()
 
+this.$nextTick(() => {
+this.scrollToMovies()
+})
+
 },
 
 startEdit(movie) {
@@ -619,6 +665,10 @@ await api.delete(
 )
 
 this.fetchMovies()
+
+this.$nextTick(() => {
+this.scrollToMovies()
+})
 
 },
 
@@ -643,17 +693,29 @@ this.commentTotalPages = res.data.totalPages || 1
 resetComments() {
 this.commentPage = 1
 this.fetchAllComments()
+
+this.$nextTick(() => {
+this.scrollToComments()
+})
 },
 
 goToCommentPage(page) {
 this.commentPage = page
 this.fetchAllComments()
+
+this.$nextTick(() => {
+this.scrollToComments()
+})
 },
 
 nextCommentPage() {
 if (this.commentPage < this.commentTotalPages) {
 this.commentPage++
 this.fetchAllComments()
+
+this.$nextTick(() => {
+this.scrollToComments()
+})
 }
 },
 
@@ -661,6 +723,10 @@ prevCommentPage() {
 if (this.commentPage > 1) {
 this.commentPage--
 this.fetchAllComments()
+
+this.$nextTick(() => {
+this.scrollToComments()
+})
 }
 },
 
@@ -676,6 +742,10 @@ await api.delete(
 )
 
 this.fetchAllComments()
+
+this.$nextTick(() => {
+this.scrollToComments()
+})
 
 }
 

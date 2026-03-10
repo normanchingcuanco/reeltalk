@@ -44,7 +44,7 @@
 
     <hr />
 
-    <div class="filter-bar search-section">
+    <div class="filter-bar search-section" ref="moviesSection">
       <h2>All Movies</h2>
     </div>
 
@@ -155,6 +155,17 @@ export default {
 
   methods: {
 
+    scrollToMovies() {
+      const section = this.$refs.moviesSection
+
+      if (section) {
+        section.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        })
+      }
+    },
+
     async fetchTrending() {
       const res = await api.get("/movies/getMovies", {
         params: {
@@ -207,6 +218,10 @@ export default {
     applyFilters() {
       this.currentPage = 1
       this.fetchMovies()
+
+      this.$nextTick(() => {
+        this.scrollToMovies()
+      })
     },
 
     resetFilters() {
@@ -215,11 +230,19 @@ export default {
       this.sort = ""
       this.currentPage = 1
       this.fetchMovies()
+
+      this.$nextTick(() => {
+        this.scrollToMovies()
+      })
     },
 
     changePage(page) {
       this.currentPage = page
       this.fetchMovies()
+
+      this.$nextTick(() => {
+        this.scrollToMovies()
+      })
     },
 
     async addMovie() {
@@ -242,6 +265,11 @@ export default {
         this.addSuccess = "Movie added!"
         this.currentPage = 1
         await this.refreshAll()
+
+        this.$nextTick(() => {
+          this.scrollToMovies()
+        })
+
       } catch (error) {
         this.addError = error.response?.data?.message || "Failed to add movie."
       } finally {
