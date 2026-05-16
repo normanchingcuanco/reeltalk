@@ -106,10 +106,14 @@ exports.addMovie = async (req, res) => {
 
     let posterUrl = null
 
-    // Ignore unreliable Amazon posters from OMDb
-    if (data.Poster && data.Poster !== "N/A" && !data.Poster.includes("amazon")) {
+    console.log("OMDB POSTER RAW >>>", data.Poster)
+
+    // Use OMDb poster if available
+    if (data.Poster && data.Poster !== "N/A") {
       posterUrl = data.Poster
     }
+
+    console.log("POSTER URL SAVED >>>", posterUrl)
 
     // 🔥 TMDb fallback if poster missing or unreliable
     if (!posterUrl && process.env.TMDB_API_KEY) {
