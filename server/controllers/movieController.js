@@ -810,7 +810,6 @@ exports.getAllMoviesAdmin = async (req, res) => {
 }
 // backend/controllers/movieController.js
 
-const Movie = require("../models/Movie")
 const User = require("../models/User")
 const axios = require("axios")
 const mongoose = require("mongoose")
