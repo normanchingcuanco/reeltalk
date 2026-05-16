@@ -1,5 +1,34 @@
 <template>
 
+  <!-- ================= EDIT MOVIE MODAL ================= -->
+  <div v-if="editingMovie" class="modal-overlay" @click.self="editingMovie = null">
+    <div class="modal">
+      <h3>Edit Movie</h3>
+      <input v-model="editingMovie.title" placeholder="Title" />
+      <input v-model="editingMovie.director" placeholder="Director" />
+      <input v-model.number="editingMovie.year" placeholder="Year" type="number" />
+      <input v-model="editingMovie.genre" placeholder="Genre" />
+      <textarea v-model="editingMovie.description" placeholder="Description" rows="3" />
+      <input v-model="editingMovie.posterUrl" placeholder="Poster URL" />
+      <div class="modal-actions">
+        <button class="secondary" @click="editingMovie = null">Cancel</button>
+        <button class="primary" @click="submitEditMovie">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EDIT COMMENT MODAL ================= -->
+  <div v-if="editingComment" class="modal-overlay" @click.self="editingComment = null">
+    <div class="modal">
+      <h3>Edit Comment</h3>
+      <textarea v-model="editingComment.comment" rows="4" />
+      <div class="modal-actions">
+        <button class="secondary" @click="editingComment = null">Cancel</button>
+        <button class="primary" @click="submitEditComment">Save</button>
+      </div>
+    </div>
+  </div>
+
 <!-- ================= GLOBAL TOAST ================= -->
 <div v-if="successMsg || errorMsg" class="toast-wrapper">
   <div class="toast" :class="successMsg ? 'toast-success' : 'toast-error'">
@@ -654,7 +683,31 @@ this.scrollToMovies()
 },
 
 startEdit(movie) {
-this.editingMovie = { ...movie }
+  this.editingMovie = { ...movie }
+},
+
+async submitEditMovie() {
+  try {
+    await api.patch(
+      `/movies/updateMovie/${this.editingMovie._id}`,
+      {
+        title: this.editingMovie.title,
+        director: this.editingMovie.director,
+        year: this.editingMovie.year,
+        genre: this.editingMovie.genre,
+        description: this.editingMovie.description,
+        posterUrl: this.editingMovie.posterUrl
+      },
+      { headers: this.authHeaders() }
+    )
+    this.editingMovie = null
+    this.successMsg = "Movie updated!"
+    setTimeout(() => { this.successMsg = "" }, 3000)
+    await this.fetchMovies()
+  } catch (e) {
+    this.errorMsg = e?.response?.data?.message || "Failed to update movie."
+    setTimeout(() => { this.errorMsg = "" }, 3000)
+  }
 },
 
 async deleteMovie(id) {
@@ -731,7 +784,24 @@ this.scrollToComments()
 },
 
 startEditComment(comment) {
-this.editingComment = { ...comment }
+  this.editingComment = { ...comment }
+},
+
+async submitEditComment() {
+  try {
+    await api.patch(
+      `/movies/editComment/${this.editingComment.movieId}/${this.editingComment.commentId}`,
+      { comment: this.editingComment.comment },
+      { headers: this.authHeaders() }
+    )
+    this.editingComment = null
+    this.successMsg = "Comment updated!"
+    setTimeout(() => { this.successMsg = "" }, 3000)
+    await this.fetchAllComments()
+  } catch (e) {
+    this.errorMsg = e?.response?.data?.message || "Failed to update comment."
+    setTimeout(() => { this.errorMsg = "" }, 3000)
+  }
 },
 
 async deleteComment(comment) {
